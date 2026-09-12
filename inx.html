@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mau Mau — AI Virtual Try-In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== BOOT / WELCOME SCREEN ===================== -->
+  <section id="boot-screen" class="screen active">
+    <div class="sky">
+      <div class="stars"></div>
+      <div class="mountains"></div>
+    </div>
+
+    <div class="boot-window">
+      <div class="window-titlebar">
+        <span>MAU MAU'S FASHION.EXE</span>
+        <span class="titlebar-dots"><i></i><i></i><i></i></span>
+      </div>
+
+      <div class="window-body">
+        <div class="mascot-wrap">
+          <div class="mascot" id="bootMascot">
+            <div class="mascot-face"><span class="eye"></span><span class="eye"></span></div>
+            <div class="mascot-blush"></div>
+          </div>
+        </div>
+
+        <h1 class="boot-title">Welcome to the<br><span>Virtual Try-In</span></h1>
+        <p class="boot-sub">Your closet is waiting.<br>Make something cute.</p>
+
+        <button id="startBtn" class="btn-pixel">START ▷</button>
+        <button id="howBtn" class="link-pixel">how to play?</button>
+      </div>
+
+      <div class="window-footer">
+        <span>MAU MAU OS</span>
+        <span>v2.00 AI</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW TO PLAY MODAL ===================== -->
+  <div id="howModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>How it works</h3>
+      <ol>
+        <li>Upload a clear photo of yourself (front-facing, full body works best).</li>
+        <li>Upload a photo of the clothing item you want to try.</li>
+        <li>Drag, resize and rotate the garment onto your photo.</li>
+        <li>Hit <b>Generate Try-On</b> and save your new look from the photo booth.</li>
+      </ol>
+      <button class="btn-pixel small" id="closeHow">GOT IT</button>
+    </div>
+  </div>
+
+  <!-- ===================== MAIN STUDIO SCREEN ===================== -->
+  <section id="studio-screen" class="screen">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-avatar">MM</div>
+        <div class="brand-text">
+          <strong>Mau Mau</strong>
+          <small>FASHION.EXE</small>
+        </div>
+      </div>
+      <div class="status">
+        <span class="dot"></span> ONLINE / ai closet connected
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="resetBtn" title="Reset">⟲</button>
+      </div>
+    </header>
+
+    <div class="ribbon">✦ AI VIRTUAL TRY-IN STUDIO</div>
+
+    <main class="studio-grid">
+
+      <!-- LEFT: fit files -->
+      <aside class="panel fit-files">
+        <div class="panel-heading">
+          <span>YOUR FIT FILES</span>
+          <span class="badge" id="neededBadge">2 NEEDED</span>
+        </div>
+
+        <label class="upload-slot" id="slotPerson">
+          <input type="file" accept="image/*" id="personInput" hidden />
+          <div class="upload-icon">🖼️+</div>
+          <div class="upload-title">01 / YOUR PHOTO</div>
+          <div class="upload-hint">Front-facing, full body works best</div>
+          <span class="btn-pixel tiny">CHOOSE IMAGE</span>
+        </label>
+
+        <label class="upload-slot" id="slotClothing">
+          <input type="file" accept="image/*" id="clothingInput" hidden />
+          <div class="upload-icon">🖼️+</div>
+          <div class="upload-title">02 / CLOTHING PHOTO</div>
+          <div class="upload-hint">Use a clear, flat garment photo</div>
+          <span class="btn-pixel tiny">CHOOSE IMAGE</span>
+        </label>
+
+        <button class="btn-pixel wide" id="cameraBtn">📷 USE CAMERA</button>
+        <p class="fineprint">Images stay in your browser and are not uploaded anywhere.</p>
+      </aside>
+
+      <!-- CENTER: try on area -->
+      <section class="panel try-on">
+        <div class="panel-heading">
+          <span>TRY-ON AREA</span>
+          <span class="badge" id="stateBadge">EMPTY / PHOTO</span>
+        </div>
+
+        <h2 class="lead">Let's make a look.</h2>
+
+        <div class="canvas-frame" id="canvasFrame">
+          <canvas id="tryonCanvas" width="700" height="620"></canvas>
+          <div class="canvas-placeholder" id="canvasPlaceholder">
+            <div class="target">◎</div>
+            <p>YOUR PHOTO GOES HERE</p>
+            <small>upload a photo or use the camera</small>
+          </div>
+          <div class="canvas-stamp">MAU MAU<br>TRY-IN AI</div>
+        </div>
+
+        <div class="garment-controls hidden" id="garmentControls">
+          <label>Size <input type="range" id="scaleRange" min="20" max="200" value="80"></label>
+          <label>Rotate <input type="range" id="rotateRange" min="-45" max="45" value="0"></label>
+          <span class="hint">drag the garment to position it</span>
+        </div>
+
+        <button class="btn-pixel big" id="generateBtn" disabled>✦ GENERATE TRY-ON</button>
+      </section>
+
+      <!-- RIGHT: assistant + steps -->
+      <aside class="panel side">
+        <div class="assistant-card">
+          <div class="assistant-avatar">
+            <div class="mascot small"><div class="mascot-face"><span class="eye"></span><span class="eye"></span></div></div>
+          </div>
+          <div>
+            <strong>MauMau</strong>
+            <p id="assistantMsg">Two photos, one new look. I can help. ♥</p>
+          </div>
+        </div>
+
+        <div class="panel-heading small">
+          <span>HOW IT WORKS</span>
+        </div>
+        <ol class="steps">
+          <li><span>1</span>Upload your photo</li>
+          <li><span>2</span>Add a clothing photo</li>
+          <li><span>3</span>Generate your look</li>
+          <li><span>4</span>Finish in photo booth</li>
+        </ol>
+
+        <button class="btn-pixel wide" id="boothBtn" disabled>▤ OPEN PHOTO BOOTH</button>
+      </aside>
+    </main>
+  </section>
+
+  <!-- ===================== CAMERA MODAL ===================== -->
+  <div id="cameraModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Say cheese 📸</h3>
+      <video id="cameraVideo" autoplay playsinline></video>
+      <div class="modal-actions">
+        <button class="btn-pixel small" id="snapBtn">CAPTURE</button>
+        <button class="btn-pixel small ghost" id="cancelCameraBtn">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PHOTO BOOTH / RESULT MODAL ===================== -->
+  <div id="boothModal" class="modal hidden">
+    <div class="modal-card booth-card">
+      <h3>Your new look ✨</h3>
+      <div class="booth-frame">
+        <canvas id="boothCanvas" width="500" height="500"></canvas>
+      </div>
+      <div class="modal-actions">
+        <a class="btn-pixel small" id="downloadBtn" download="maumau-look.png">DOWNLOAD</a>
+        <button class="btn-pixel small ghost" id="closeBoothBtn">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="hiddenCanvas" hidden></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
