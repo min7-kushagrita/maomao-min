@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Fit — Y2K / MS Paint Virtual Outfit Try-On</title>
+  <meta name="description" content="A retro Windows 98 and MS Paint styled virtual outfit try-on tool with Y2K comic collage aesthetics. Drag, drop, scale, rotate clothes, customize hair, and randomize your pixel style!">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Y2K Pop-Art Comic Wallpaper Accents -->
+  <div class="y2k-backdrop" aria-hidden="true">
+    <div class="y2k-element starburst-1">
+      <span>💥</span>
+      <span>Y2K TRY-ON V1.0</span>
+    </div>
+    <div class="y2k-element starburst-2">
+      <span>⭐</span>
+      <span>TOTAL VIBE CHECK!</span>
+    </div>
+    <div class="y2k-element comic-exclamation">!</div>
+    <div class="y2k-element comic-badge-y2k">PIXEL FIT '00 ★ CYBER COUTURE</div>
+    <div class="y2k-element comic-star-art star-pos-1">✦</div>
+    <div class="y2k-element comic-star-art star-pos-2">★</div>
+  </div>
+
+  <!-- Windows 98 Bootup / MS Paint Splash Loading Screen -->
+  <div id="bootLoadingScreen">
+    <div class="loading-logo-box">
+      <div class="loading-logo-title">🎨 PIXEL FIT 2000</div>
+      <div class="loading-logo-sub">Microsoft Paint Virtual Try-On Edition</div>
+    </div>
+    <div class="loading-progress-frame">
+      <div class="loading-progress-bar" id="loadingProgressBar"></div>
+    </div>
+    <div class="loading-status-text" id="loadingStatusText">Loading wardrobe assets...</div>
+  </div>
+
+  <!-- Main MS Paint Window -->
+  <main class="paint-window" id="paintWindow" role="application" aria-label="Pixel Fit Paint Application">
+    
+    <!-- Title Bar -->
+    <header class="window-titlebar">
+      <div class="titlebar-left">
+        <svg class="titlebar-icon" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="14" height="14" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
+          <path d="M3 13V3h10v10H3z" fill="#fff"/>
+          <path d="M4 11l2-4 3 3 3-5v7H4z" fill="#000080"/>
+          <circle cx="6" cy="5" r="1.5" fill="#ff0000"/>
+        </svg>
+        <span id="windowTitleText">untitled - Paint</span>
+      </div>
+      <div class="window-controls">
+        <button class="win98-btn win-control-btn" id="btnMinimize" aria-label="Minimize">─</button>
+        <button class="win98-btn win-control-btn" id="btnMaximize" aria-label="Maximize">▢</button>
+        <button class="win98-btn win-control-btn" id="btnClose" aria-label="Close">✕</button>
+      </div>
+    </header>
+
+    <!-- Menu Bar -->
+    <nav class="window-menubar" id="windowMenuBar" aria-label="Menu Bar">
+      <!-- File Menu -->
+      <div class="menu-item">
+        <button class="menu-trigger" data-menu="menuFile"><u>F</u>ile</button>
+        <div class="menu-dropdown" id="menuFile">
+          <div class="menu-dropdown-item" id="menuNew"><span><u>N</u>ew Fit</span><span class="menu-shortcut">Ctrl+N</span></div>
+          <div class="menu-dropdown-item" id="menuOpenFits"><span><u>O</u>pen Fits (Wardrobe)...</span><span class="menu-shortcut">Ctrl+O</span></div>
+          <div class="menu-dropdown-item" id="menuSaveFit"><span><u>S</u>ave Fit</span><span class="menu-shortcut">Ctrl+S</span></div>
+          <div class="menu-dropdown-item" id="menuExportPng"><span><u>E</u>xport PNG Image...</span></div>
+          <div class="menu-dropdown-item separator"></div>
+          <div class="menu-dropdown-item" id="menuCamera"><span>📷 Take Picture (<u>C</u>amera)...</span></div>
+          <div class="menu-dropdown-item" id="menuUpload"><span>📁 <u>I</u>mport Local Image...</span></div>
+          <div class="menu-dropdown-item separator"></div>
+          <div class="menu-dropdown-item" id="menuExit"><span>E<u>x</u>it</span></div>
+        </div>
+      </div>
+
+      <!-- Edit Menu -->
+      <div class="menu-item">
+        <button class="menu-trigger" data-menu="menuEdit"><u>E</u>dit</button>
+        <div class="menu-dropdown" id="menuEdit">
+          <div class="menu-dropdown-item" id="menuUndo"><span><u>U</u>ndo</span><span class="menu-shortcut">Ctrl+Z</span></div>
+          <div class="menu-dropdown-item" id="menuRedo"><span><u>R</u>edo</span><span class="menu-shortcut">Ctrl+Y</span></div>
+          <div class="menu-dropdown-item separator"></div>
+          <div class="menu-dropdown-item" id="menuDeleteSelected"><span><u>D</u>elete Selected</span><span class="menu-shortcut">Del</span></div>
+          <div class="menu-dropdown-item" id="menuClearAll"><span><u>C</u>lear Canvas</span></div>
+        </div>
+      </div>
+
+      <!-- View Menu -->
+      <div class="menu-item">
+        <button class="menu-trigger" data-menu="menuView"><u>V</u>iew</button>
+        <div class="menu-dropdown" id="menuView">
+          <div class="menu-dropdown-item" id="menuToggleZoom"><span><u>Z</u>oom In/Out</span></div>
+          <div class="menu-dropdown-item" id="menuToggleSound"><span><u>M</u>ute / Unmute Sound</span></div>
+        </div>
+      </div>
+
+      <!-- Image Menu -->
+      <div class="menu-item">
+        <button class="menu-trigger" data-menu="menuImage"><u>I</u>mage</button>
+        <div class="menu-dropdown" id="menuImage">
+          <div class="menu-dropdown-item" id="menuFlipH"><span><u>F</u>lip Horizontal</span></div>
+          <div class="menu-dropdown-item" id="menuLayerUp"><span>Bring <u>F</u>orward</span></div>
+          <div class="menu-dropdown-item" id="menuLayerDown"><span>Send <u>B</u>ackward</span></div>
+          <div class="menu-dropdown-item separator"></div>
+          <div class="menu-dropdown-item" id="menuInvert"><span><u>I</u>nvert Background</span></div>
+          <div class="menu-dropdown-item separator"></div>
+          <div class="menu-dropdown-item" id="menuImageCamera"><span>📷 Snap Camera Model...</span></div>
+          <div class="menu-dropdown-item" id="menuImageUpload"><span>📁 Upload Image / Model...</span></div>
+          <div class="menu-dropdown-item" id="menuClearModel"><span>Clear Custom Model Photo</span></div>
+        </div>
+      </div>
+
+      <!-- Colors Menu -->
+      <div class="menu-item">
+        <button class="menu-trigger" data-menu="menuColors"><u>C</u>olors</button>
+        <div class="menu-dropdown" id="menuColors">
+          <div class="menu-dropdown-item" id="menuPresetClassic"><span>Classic Paint 98</span></div>
+          <div class="menu-dropdown-item" id="menuPresetY2K"><span>Y2K Bubblegum Neon</span></div>
+          <div class="menu-dropdown-item" id="menuPresetCyber"><span>Cyber Matrix 2000</span></div>
+        </div>
+      </div>
+
+      <!-- Help Menu -->
+      <div class="menu-item">
+        <button class="menu-trigger" data-menu="menuHelp"><u>H</u>elp</button>
+        <div class="menu-dropdown" id="menuHelp">
+          <div class="menu-dropdown-item" id="menuHelpTopics"><span><u>H</u>elp Topics</span></div>
+          <div class="menu-dropdown-item separator"></div>
+          <div class="menu-dropdown-item" id="menuAbout"><span><u>A</u>bout Pixel Fit...</span></div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Quick Action Ribbon / Tool Strip -->
+    <section class="quick-ribbon" aria-label="Quick Actions Ribbon">
+      <div class="ribbon-group">
+        <span class="ribbon-label">Style:</span>
+        <select id="styleSelect" class="style-selector" aria-label="Filter style">
+          <option value="all">🎲 All Styles (Wild)</option>
+          <option value="y2k">✨ Y2K Cyber</option>
+          <option value="streetwear">🧢 Streetwear</option>
+          <option value="grunge">🎸 Grunge 90s</option>
+          <option value="harajuku">🌸 Harajuku Pop</option>
+          <option value="cottagecore">🍄 Cottagecore</option>
+          <option value="sporty">⚡ Retro Sporty</option>
+        </select>
+        <button class="win98-btn btn-randomize" id="btnRandomize" data-tooltip="Generate Random Coordinated Outfit">
+          <span>🎲</span>
+          <span>Randomize</span>
+        </button>
+        <button class="win98-btn" id="btnReset" data-tooltip="Reset to bare mannequin">
+          <span>🔄 Reset</span>
+        </button>
+      </div>
+
+      <div class="ribbon-group">
+        <button class="win98-btn" id="btnUndo" data-tooltip="Undo (Ctrl+Z)">↩️ Undo</button>
+        <button class="win98-btn" id="btnRedo" data-tooltip="Redo (Ctrl+Y)">↪️ Redo</button>
+        <button class="win98-btn" id="btnFlipSelected" data-tooltip="Flip Selected Item">⇄ Flip</button>
+        <button class="win98-btn" id="btnDeleteSelected" data-tooltip="Remove Selected Item">🗑️ Del</button>
+      </div>
+
+      <div class="ribbon-group">
+        <button class="win98-btn btn-camera-action" id="btnCamera" data-tooltip="Take Picture with Camera / Webcam">
+          <span>📷</span>
+          <span>Camera</span>
+        </button>
+        <button class="win98-btn btn-upload-action" id="btnUpload" data-tooltip="Upload Image from Local File (or Paste Ctrl+V)">
+          <span>📁</span>
+          <span>Upload</span>
+        </button>
+      </div>
+
+      <div class="ribbon-group">
+        <button class="win98-btn" id="btnOpenWardrobe" data-tooltip="Open Saved Outfits Gallery">
+          <span>📁 My Fits</span>
+        </button>
+        <!-- Red Pinterest-Style Save Button -->
+        <button class="win98-btn btn-pinterest-save" id="btnSaveFit" data-tooltip="Save Fit to Wardrobe & Download PNG">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.63 11.17-.11-.95-.2-2.4.04-3.44.22-.94 1.4-5.94 1.4-5.94s-.36-.72-.36-1.78c0-1.67.97-2.92 2.17-2.92 1.02 0 1.52.77 1.52 1.69 0 1.03-.66 2.57-1 4-.28 1.2.6 2.17 1.78 2.17 2.14 0 3.78-2.26 3.78-5.52 0-2.88-2.07-4.9-5.03-4.9-3.43 0-5.44 2.57-5.44 5.23 0 1.03.4 2.14.9 2.74.1.12.11.22.08.34-.1.38-.3 1.2-.34 1.37-.05.22-.17.27-.4.16-1.5-.7-2.43-2.88-2.43-4.63 0-3.77 2.74-7.23 7.9-7.23 4.15 0 7.37 2.96 7.37 6.91 0 4.12-2.6 7.44-6.2 7.44-1.21 0-2.35-.63-2.74-1.38l-.75 2.85c-.27 1.04-1 2.35-1.49 3.14A11.96 11.96 0 0012 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
+          </svg>
+          <span>Save Fit</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Workspace (Toolbar + Wardrobe Tray + Fitting Canvas) -->
+    <div class="paint-workspace">
+
+      <!-- Column 1: MS Paint Left Toolbar (16 Classic Tools) -->
+      <aside class="toolbar-section" aria-label="Paint Tools">
+        <div class="tools-grid" id="toolsGrid">
+          <!-- 1. Free-form Select -->
+          <button class="tool-btn" data-tool="free-select" data-tooltip="Free-Form Select" aria-label="Free-Form Select">
+            <svg viewBox="0 0 16 16"><path d="M4 2l4 2-2 4 4 1-2 5-4-3 1-4-3-1z" stroke="#000" stroke-dasharray="1 1" fill="none"/></svg>
+          </button>
+          <!-- 2. Select (Default tool) -->
+          <button class="tool-btn active" data-tool="select" data-tooltip="Select & Move Item" aria-label="Select">
+            <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" stroke="#000" stroke-dasharray="2 2" fill="none"/></svg>
+          </button>
+          <!-- 3. Eraser (Functional: removes item or doodle strokes) -->
+          <button class="tool-btn" data-tool="eraser" data-tooltip="Eraser (Remove Item or Doodle)" aria-label="Eraser">
+            <svg viewBox="0 0 16 16"><rect x="3" y="5" width="10" height="8" fill="#fff" stroke="#000" stroke-width="1.5"/><rect x="5" y="7" width="6" height="4" fill="#ff99bb"/></svg>
+          </button>
+          <!-- 4. Fill Bucket (Functional: sets canvas or item tint) -->
+          <button class="tool-btn" data-tool="bucket" data-tooltip="Fill With Color" aria-label="Fill Bucket">
+            <svg viewBox="0 0 16 16"><path d="M2 7l5-5 6 6-4 4-5-5z" fill="#00ffff" stroke="#000"/><path d="M3 14c1 0 1-2 2-2s1 2 2 2-1 2-2 2-2-2-2-2z" fill="#000"/></svg>
+          </button>
+          <!-- 5. Eyedropper / Color Picker -->
+          <button class="tool-btn" data-tool="eyedropper" data-tooltip="Pick Color" aria-label="Eyedropper">
+            <svg viewBox="0 0 16 16"><path d="M12 2l2 2-3 3-1-1-4 4-2-1 1-2 4-4-1-1 2-2z" fill="#ffcc00" stroke="#000"/><rect x="2" y="13" width="2" height="2" fill="#000"/></svg>
+          </button>
+          <!-- 6. Magnifier / Zoom -->
+          <button class="tool-btn" data-tool="magnifier" data-tooltip="Magnifier (Zoom Canvas)" aria-label="Magnifier">
+            <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" stroke="#000" stroke-width="2" fill="none"/><line x1="11" y1="11" x2="15" y2="15" stroke="#000" stroke-width="2"/></svg>
+          </button>
+          <!-- 7. Pencil (Functional: freehand drawing) -->
+          <button class="tool-btn" data-tool="pencil" data-tooltip="Pencil (Draw Doodles)" aria-label="Pencil">
+            <svg viewBox="0 0 16 16"><path d="M13 1l2 2-8 8-3 1 1-3 8-8z" fill="#ffcc00" stroke="#000"/><rect x="1" y="14" width="2" height="2" fill="#000"/></svg>
+          </button>
+          <!-- 8. Brush (Functional: smooth brush strokes) -->
+          <button class="tool-btn" data-tool="brush" data-tooltip="Brush (Smooth Stroke)" aria-label="Brush">
+            <svg viewBox="0 0 16 16"><path d="M11 2l3 3-5 5-2-1 4-7z" fill="#808080" stroke="#000"/><path d="M3 13c1-2 3-2 4-1l-2 3-2-2z" fill="#000"/></svg>
+          </button>
+          <!-- 9. Airbrush (Spray paint effect) -->
+          <button class="tool-btn" data-tool="airbrush" data-tooltip="Airbrush (Spray Dots)" aria-label="Airbrush">
+            <svg viewBox="0 0 16 16"><rect x="7" y="5" width="6" height="8" fill="#c0c0c0" stroke="#000"/><circle cx="5" cy="4" r="1" fill="#000"/><circle cx="3" cy="2" r="1" fill="#000"/><circle cx="6" cy="1" r="1" fill="#000"/></svg>
+          </button>
+          <!-- 10. Text "A" (Sticker Stamp) -->
+          <button class="tool-btn" data-tool="text" data-tooltip="Text (Stamp Y2K Word Sticker)" aria-label="Text">
+            <svg viewBox="0 0 16 16"><text x="3" y="13" font-family="'Press Start 2P', monospace" font-size="12" fill="#000" font-weight="bold">A</text></svg>
+          </button>
+          <!-- 11. Line -->
+          <button class="tool-btn" data-tool="line" data-tooltip="Line Tool" aria-label="Line">
+            <svg viewBox="0 0 16 16"><line x1="2" y1="14" x2="14" y2="2" stroke="#000" stroke-width="2"/></svg>
+          </button>
+          <!-- 12. Curve -->
+          <button class="tool-btn" data-tool="curve" data-tooltip="Curve Tool" aria-label="Curve">
+            <svg viewBox="0 0 16 16"><path d="M2 14 Q 4 2 14 3" stroke="#000" stroke-width="2" fill="none"/></svg>
+          </button>
+          <!-- 13. Rectangle -->
+          <button class="tool-btn" data-tool="rectangle" data-tooltip="Rectangle Tool" aria-label="Rectangle">
+            <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" stroke="#000" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <!-- 14. Polygon -->
+          <button class="tool-btn" data-tool="polygon" data-tooltip="Polygon Tool" aria-label="Polygon">
+            <svg viewBox="0 0 16 16"><polygon points="8,2 14,8 10,14 3,12 2,6" stroke="#000" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <!-- 15. Ellipse -->
+          <button class="tool-btn" data-tool="ellipse" data-tooltip="Ellipse Tool" aria-label="Ellipse">
+            <svg viewBox="0 0 16 16"><ellipse cx="8" cy="8" rx="6" ry="4" stroke="#000" stroke-width="1.5" fill="none"/></svg>
+          </button>
+          <!-- 16. Rounded Rectangle -->
+          <button class="tool-btn" data-tool="roundrect" data-tooltip="Rounded Rectangle" aria-label="Rounded Rectangle">
+            <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="3" stroke="#000" stroke-width="1.5" fill="none"/></svg>
+          </button>
+        </div>
+
+        <!-- Tool Options Box (Stroke Size Selection) -->
+        <div class="tool-options-box" id="toolOptionsBox">
+          <button class="size-option active" data-size="2" aria-label="Thin Stroke">
+            <div class="size-line" style="height: 2px;"></div>
+          </button>
+          <button class="size-option" data-size="4" aria-label="Medium Stroke">
+            <div class="size-line" style="height: 4px;"></div>
+          </button>
+          <button class="size-option" data-size="6" aria-label="Thick Stroke">
+            <div class="size-line" style="height: 6px;"></div>
+          </button>
+          <button class="size-option" data-size="10" aria-label="Extra Thick Stroke">
+            <div class="size-line" style="height: 8px;"></div>
+          </button>
+        </div>
+
+        <!-- Canvas Mini Live Preview -->
+        <div class="canvas-preview-container" data-tooltip="Canvas Thumbnail Preview">
+          <canvas id="canvasPreviewMini" width="56" height="72"></canvas>
+          <span class="preview-label">PREVIEW</span>
+        </div>
+      </aside>
+
+      <!-- Column 2: Wardrobe Tray & Category Filter Tabs -->
+      <section class="clothing-tray-panel" aria-label="Clothing Tray">
+        <div class="tray-header">
+          <div class="tray-title">
+            <span>👕</span>
+            <span>WARDROBE TRAY</span>
+          </div>
+          <span id="trayItemCount" style="font-family: var(--font-pixel); font-size: 8px; color: #555;">36 items</span>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="categoryTabs" role="tablist">
+          <button class="category-tab active" data-category="all" role="tab" aria-selected="true">All</button>
+          <button class="category-tab" data-category="tops" role="tab">Tops</button>
+          <button class="category-tab" data-category="bottoms" role="tab">Bottoms</button>
+          <button class="category-tab" data-category="shoes" role="tab">Shoes</button>
+          <button class="category-tab" data-category="outerwear" role="tab">Outer</button>
+          <button class="category-tab" data-category="accessories" role="tab">Access.</button>
+          <button class="category-tab" data-category="hair" role="tab">Hair</button>
+          <button class="category-tab" data-category="pets" role="tab">Pets/Art</button>
+          <button class="category-tab" data-category="custom" role="tab">⭐ Custom</button>
+        </div>
+
+        <!-- Scrollable Grid of Clothing Thumbnails -->
+        <div class="clothing-items-grid" id="clothingGrid" aria-label="Clothing Items">
+          <!-- Populated dynamically by script.js -->
+        </div>
+      </section>
+
+      <!-- Column 3: The MS Paint Fitting Canvas -->
+      <section class="canvas-section" id="canvasSection" aria-label="Fitting Canvas Area">
+        <div class="canvas-viewport-wrapper">
+          <div class="fitting-canvas-frame" id="canvasFrame">
+            
+            <!-- Dynamic Canvas Background Layer -->
+            <div class="canvas-bg-layer" id="canvasBgLayer"></div>
+
+            <!-- Custom Photo Model Layer (User Webcam / Uploaded Try-On Photo) -->
+            <div class="custom-model-layer" id="customModelLayer" style="display: none;">
+              <img id="customModelImg" src="" alt="Custom Model Photo">
+            </div>
+
+            <!-- Model Selector Floating Mini-Bar (When custom photo model is active) -->
+            <div class="model-mode-bar" id="modelModeBar" style="display: none;" data-tooltip="Model Display Mode">
+              <span style="font-size: 8px; font-weight: bold;">Model:</span>
+              <button class="win98-btn model-mode-btn active" data-model="photo">Photo</button>
+              <button class="win98-btn model-mode-btn" data-model="mannequin">Mannequin</button>
+              <button class="win98-btn model-mode-btn" data-model="both">Both</button>
+              <button class="win98-btn model-mode-btn btn-remove-model" id="btnRemoveModel" title="Remove Photo Model">✕</button>
+            </div>
+
+            <!-- Mannequin Skin Customizer Floating Mini-Bar -->
+            <div class="mannequin-customizer-bar" id="mannequinCustomizer" data-tooltip="Select Mannequin Skin Tone">
+              <span style="font-size: 8px; font-weight: bold;">Skin:</span>
+              <button class="skin-tone-btn active" data-skin="#ffd1b3" style="background: #ffd1b3;" title="Fair"></button>
+              <button class="skin-tone-btn" data-skin="#d89e78" style="background: #d89e78;" title="Tan"></button>
+              <button class="skin-tone-btn" data-skin="#8d5524" style="background: #8d5524;" title="Deep"></button>
+              <button class="skin-tone-btn" data-skin="#c8b6ff" style="background: #c8b6ff;" title="Cyber Lavender"></button>
+              <button class="skin-tone-btn" data-skin="#bbf2c8" style="background: #bbf2c8;" title="Alien Mint"></button>
+            </div>
+
+            <!-- Base Pixel Mannequin Silhouette Layer -->
+            <div class="mannequin-base-layer" id="mannequinLayer">
+              <!-- Inline Pixel Art Mannequin SVG -->
+              <svg viewBox="0 0 320 480" id="mannequinSvg" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                <!-- Drop shadow on floor -->
+                <ellipse cx="160" cy="462" rx="72" ry="10" fill="rgba(0,0,0,0.18)"/>
+                
+                <!-- Underwear / base athletic wear -->
+                <g id="mannequinBody">
+                  <!-- Legs -->
+                  <!-- Left Leg -->
+                  <rect x="134" y="270" width="22" height="90" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="136" y="360" width="18" height="92" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="130" y="446" width="26" height="12" fill="#ffd1b3" class="skin-fill"/>
+                  <!-- Right Leg -->
+                  <rect x="164" y="270" width="22" height="90" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="166" y="360" width="18" height="92" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="164" y="446" width="26" height="12" fill="#ffd1b3" class="skin-fill"/>
+
+                  <!-- Torso & Hips -->
+                  <rect x="132" y="160" width="56" height="70" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="130" y="226" width="60" height="46" fill="#ffd1b3" class="skin-fill"/>
+
+                  <!-- Arms -->
+                  <!-- Left Arm -->
+                  <rect x="110" y="164" width="18" height="74" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="108" y="238" width="16" height="70" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="106" y="308" width="16" height="18" fill="#ffd1b3" class="skin-fill"/>
+                  <!-- Right Arm -->
+                  <rect x="192" y="164" width="18" height="74" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="196" y="238" width="16" height="70" fill="#ffd1b3" class="skin-fill"/>
+                  <rect x="198" y="308" width="16" height="18" fill="#ffd1b3" class="skin-fill"/>
+
+                  <!-- Neck -->
+                  <rect x="150" y="132" width="20" height="30" fill="#ffd1b3" class="skin-fill"/>
+
+                  <!-- Head / Face -->
+                  <rect x="138" y="70" width="44" height="64" fill="#ffd1b3" class="skin-fill"/>
+                  <!-- Chin rounding -->
+                  <rect x="144" y="130" width="32" height="6" fill="#ffd1b3" class="skin-fill"/>
+
+                  <!-- Pixel Face Details -->
+                  <!-- Eyes -->
+                  <rect x="146" y="96" width="6" height="4" fill="#111"/>
+                  <rect x="168" y="96" width="6" height="4" fill="#111"/>
+                  <rect x="148" y="97" width="2" height="2" fill="#fff"/>
+                  <rect x="170" y="97" width="2" height="2" fill="#fff"/>
+                  <!-- Eyebrows -->
+                  <rect x="145" y="91" width="8" height="2" fill="#5c3a21"/>
+                  <rect x="167" y="91" width="8" height="2" fill="#5c3a21"/>
+                  <!-- Blush -->
+                  <rect x="143" y="104" width="8" height="3" fill="#ff9999" opacity="0.6"/>
+                  <rect x="169" y="104" width="8" height="3" fill="#ff9999" opacity="0.6"/>
+                  <!-- Lips -->
+                  <rect x="156" y="114" width="8" height="3" fill="#e06666"/>
+
+                  <!-- Retro White/Grey Athletic Undergarments -->
+                  <rect x="136" y="174" width="48" height="28" fill="#e6e6e6"/>
+                  <rect x="136" y="174" width="48" height="3" fill="#999"/>
+                  <rect x="132" y="238" width="56" height="28" fill="#e6e6e6"/>
+                  <rect x="132" y="238" width="56" height="3" fill="#999"/>
+                </g>
+              </svg>
+
+              <!-- Pinned Face Selfie Overlay (if activated) -->
+              <div class="mannequin-face-overlay" id="mannequinFaceOverlay" style="display: none;">
+                <img id="mannequinFaceImg" src="" alt="Face Selfie">
+                <button class="win98-btn btn-remove-face" id="btnRemoveFace" title="Remove Face Selfie">✕</button>
+              </div>
+            </div>
+
+            <!-- Interactive Placed Clothing Container -->
+            <div class="placed-items-container" id="placedItemsContainer">
+              <!-- Dynamically rendered active clothing layers -->
+            </div>
+
+            <!-- Freehand Drawing Canvas Overlay (for Pencil, Brush, Airbrush) -->
+            <canvas id="paintCanvasOverlay" width="420" height="520"></canvas>
+
+            <!-- Classic MS Paint Resize Dots -->
+            <div class="canvas-resize-handle crh-right"></div>
+            <div class="canvas-resize-handle crh-bottom"></div>
+            <div class="canvas-resize-handle crh-corner"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Classic MS Paint Color Palette Bar (Two Rows of 14 Swatches) -->
+    <footer class="paint-palette-bar" aria-label="Color Palette Bar">
+      <!-- Foreground / Background Active Swatch Indicator -->
+      <div class="color-current-box" data-tooltip="Active Drawing & Background Color">
+        <div class="color-secondary-swatch" id="colorSecondary"></div>
+        <div class="color-primary-swatch" id="colorPrimary"></div>
+      </div>
+
+      <!-- 28 MS Paint Color Swatches -->
+      <div class="palette-swatches-grid" id="paletteSwatches" role="grid">
+        <!-- Row 1: Classic Dark / Saturated -->
+        <div class="palette-swatch" style="background: #000000;" data-color="#000000"></div>
+        <div class="palette-swatch" style="background: #808080;" data-color="#808080"></div>
+        <div class="palette-swatch" style="background: #800000;" data-color="#800000"></div>
+        <div class="palette-swatch" style="background: #808000;" data-color="#808000"></div>
+        <div class="palette-swatch" style="background: #008000;" data-color="#008000"></div>
+        <div class="palette-swatch" style="background: #008080;" data-color="#008080"></div>
+        <div class="palette-swatch" style="background: #000080;" data-color="#000080"></div>
+        <div class="palette-swatch" style="background: #800080;" data-color="#800080"></div>
+        <div class="palette-swatch" style="background: #808040;" data-color="#808040"></div>
+        <div class="palette-swatch" style="background: #004040;" data-color="#004040"></div>
+        <div class="palette-swatch" style="background: #0080ff;" data-color="#0080ff"></div>
+        <div class="palette-swatch" style="background: #004080;" data-color="#004080"></div>
+        <div class="palette-swatch" style="background: #8000ff;" data-color="#8000ff"></div>
+        <div class="palette-swatch" style="background: #804000;" data-color="#804000"></div>
+
+        <!-- Row 2: Classic Light / Pastel -->
+        <div class="palette-swatch" style="background: #ffffff;" data-color="#ffffff"></div>
+        <div class="palette-swatch" style="background: #c0c0c0;" data-color="#c0c0c0"></div>
+        <div class="palette-swatch" style="background: #ff0000;" data-color="#ff0000"></div>
+        <div class="palette-swatch" style="background: #ffff00;" data-color="#ffff00"></div>
+        <div class="palette-swatch" style="background: #00ff00;" data-color="#00ff00"></div>
+        <div class="palette-swatch" style="background: #00ffff;" data-color="#00ffff"></div>
+        <div class="palette-swatch" style="background: #0000ff;" data-color="#0000ff"></div>
+        <div class="palette-swatch" style="background: #ff00ff;" data-color="#ff00ff"></div>
+        <div class="palette-swatch" style="background: #ffff80;" data-color="#ffff80"></div>
+        <div class="palette-swatch" style="background: #00ff80;" data-color="#00ff80"></div>
+        <div class="palette-swatch" style="background: #80ffff;" data-color="#80ffff"></div>
+        <div class="palette-swatch" style="background: #7092be;" data-color="#7092be"></div>
+        <div class="palette-swatch" style="background: #ffaec9;" data-color="#ffaec9"></div>
+        <div class="palette-swatch" style="background: #ffc90e;" data-color="#ffc90e"></div>
+      </div>
+
+      <!-- Quick Canvas Tint Actions -->
+      <div class="palette-actions">
+        <button class="win98-btn" id="btnFillBg" data-tooltip="Set Canvas Background to Active Color">
+          <span>Set BG</span>
+        </button>
+        <button class="win98-btn" id="btnClearBg" data-tooltip="Clear Canvas BG to White">
+          <span>White BG</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Bottom Windows 98 Status Bar + Retro Odometer -->
+    <div class="paint-statusbar" aria-label="Status Bar">
+      <div class="status-cell status-message" id="statusHelpText">
+        For Help, click Help Topics on the Help Menu.
+      </div>
+      <div class="status-cell status-coords" id="statusCoords">
+        0, 0px
+      </div>
+      <div class="status-cell status-size" id="statusCanvasSize">
+        420x520px
+      </div>
+
+      <!-- Retro Digital Odometer Wear Counter -->
+      <div class="status-odometer-wrap" data-tooltip="Total Outfits Tried (Persisted in LocalStorage)">
+        <span class="odometer-label">FITS TRIED:</span>
+        <span class="odometer-display" id="odometerCounter">000</span>
+      </div>
+
+      <!-- 8-Bit Audio Sound Toggle -->
+      <button class="win98-btn btn-sound-toggle" id="btnSoundToggle" data-tooltip="Toggle 8-bit Audio">
+        <span id="soundIcon">🔊</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1: "MY FITS" WARDROBE GALLERY
+       ======================================================================== -->
+  <div class="modal-overlay" id="myFitsModal" role="dialog" aria-modal="true" aria-labelledby="fitsModalTitle">
+    <div class="modal-dialog">
+      <header class="window-titlebar">
+        <div class="titlebar-left">
+          <span>📁</span>
+          <span id="fitsModalTitle">My Fits — Saved Wardrobe Gallery</span>
+        </div>
+        <button class="win98-btn win-control-btn modal-close-btn" aria-label="Close">✕</button>
+      </header>
+      <div class="modal-body">
+        <p style="margin-bottom: 8px;">Your custom saved looks from this session and past visits. Click <b>Equip</b> to restore, or <b>PNG</b> to download!</p>
+        <div class="my-fits-grid" id="myFitsGrid">
+          <!-- Dynamically populated from localStorage -->
+        </div>
+        <div id="noFitsPlaceholder" style="display: none; padding: 24px; text-align: center; color: #666; font-family: var(--font-pixel); font-size: 10px;">
+          No outfits saved yet! Dress up your mannequin and click "Save Fit" to store your favorite looks here.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="win98-btn modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: HELP & ABOUT DIALOG
+       ======================================================================== -->
+  <div class="modal-overlay" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+    <div class="modal-dialog">
+      <header class="window-titlebar">
+        <div class="titlebar-left">
+          <span>❓</span>
+          <span id="helpModalTitle">Pixel Fit Help & About</span>
+        </div>
+        <button class="win98-btn win-control-btn modal-close-btn" aria-label="Close">✕</button>
+      </header>
+      <div class="modal-body">
+        <h4 style="font-family: var(--font-pixel); font-size: 11px; margin-bottom: 8px;">🎨 Pixel Fit v1.0 — Virtual Try-On</h4>
+        <p style="margin-bottom: 8px;">Welcome to <b>Pixel Fit</b>, a nostalgic Y2K Windows 98 / MS Paint dressing room!</p>
+        <ul style="padding-left: 18px; margin-bottom: 10px; line-height: 1.5;">
+          <li><b>Drag & Drop or Click:</b> Pick any clothing item from the Wardrobe Tray and drag it onto the mannequin, or click it to auto-equip.</li>
+          <li><b>Resize & Rotate:</b> Click placed items to reveal handles. Drag the bottom corner square to scale, and drag the yellow top circle to spin!</li>
+          <li><b>Keyboard Controls:</b> Use <b>Arrow keys</b> to nudge placed items (hold <b>Shift</b> for 10px jumps). Press <b>Delete</b> to remove.</li>
+          <li><b>🎲 Randomize:</b> Choose a style tag (Streetwear, Y2K Cyber, Grunge, etc.) and hit Randomize for an instant coordinated fit.</li>
+          <li><b>Doodle Layer:</b> Use the Pencil, Brush, Airbrush, or Eraser tools from the MS Paint toolbar to draw right on your fit!</li>
+          <li><b>Save & Export:</b> Click the red <b>Save Fit</b> button to export a crisp PNG image and save your look into your wardrobe gallery.</li>
+        </ul>
+        <p style="font-size: 10px; color: #444;">Built with pure HTML5, CSS3, and JavaScript. 100% self-contained with real-time Web Audio API sound synthesis.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="win98-btn modal-close-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: CAMERA SNAPSHOT & LOCAL IMAGE UPLOAD
+       ======================================================================== -->
+  <div class="modal-overlay" id="cameraUploadModal" role="dialog" aria-modal="true" aria-labelledby="cameraUploadTitle">
+    <div class="modal-dialog modal-dialog-wide">
+      <header class="window-titlebar">
+        <div class="titlebar-left">
+          <span class="media-title-icon">📷</span>
+          <span id="cameraUploadTitle">Pixel Camera & Image Import — MS Paint 98</span>
+        </div>
+        <button class="win98-btn win-control-btn modal-close-btn" aria-label="Close">✕</button>
+      </header>
+
+      <!-- Modal Navigation Tabs -->
+      <div class="import-tabs" role="tablist">
+        <button class="win98-btn import-tab-btn active" id="tabBtnCamera" data-tab="tabCamera">
+          <span>📷</span> Take Picture (Camera)
+        </button>
+        <button class="win98-btn import-tab-btn" id="tabBtnUpload" data-tab="tabUpload">
+          <span>📁</span> Upload Local Image
+        </button>
+      </div>
+
+      <div class="modal-body import-modal-body">
+        <!-- Camera Tab Content -->
+        <div class="import-tab-content active" id="tabCamera">
+          <div class="camera-layout">
+            <!-- Viewfinder Frame -->
+            <div class="viewfinder-frame" id="viewfinderFrame">
+              <video id="webcamVideo" autoplay playsinline muted></video>
+              <canvas id="cameraCanvas" style="display:none;"></canvas>
+              
+              <!-- CRT Scanlines and Reticle overlay -->
+              <div class="viewfinder-overlay" id="viewfinderOverlay">
+                <div class="viewfinder-corner tl"></div>
+                <div class="viewfinder-corner tr"></div>
+                <div class="viewfinder-corner bl"></div>
+                <div class="viewfinder-corner br"></div>
+                <div class="viewfinder-crosshair"></div>
+                <div class="viewfinder-rec"><span class="rec-dot"></span> LIVE CAM</div>
+                <div class="viewfinder-timer" id="cameraCountdown" style="display: none;">3</div>
+                <div class="viewfinder-flash" id="cameraFlash"></div>
+              </div>
+              
+              <div class="camera-fallback-msg" id="cameraFallbackMsg" style="display: none;">
+                <p>⚠️ Camera access not available or blocked in browser permissions.</p>
+                <button class="win98-btn" id="btnUseSamplePhoto">🖼️ Load Sample Model Photo</button>
+              </div>
+            </div>
+
+            <!-- Camera Controls Strip -->
+            <div class="camera-controls-strip">
+              <button class="win98-btn btn-cam-shutter" id="btnCamShutter">
+                <span>📸</span> SNAP PICTURE
+              </button>
+              <button class="win98-btn" id="btnCamTimer" data-tooltip="3-Second Timer Snapshot">
+                <span>⏱️</span> 3s Timer
+              </button>
+              <button class="win98-btn" id="btnCamSwitch" data-tooltip="Switch Front / Back Camera">
+                <span>🔄</span> Flip Cam
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Upload Tab Content -->
+        <div class="import-tab-content" id="tabUpload">
+          <div class="upload-dropzone" id="uploadDropzone">
+            <div class="dropzone-icon">📁</div>
+            <p class="dropzone-title">Drag & Drop Image File Here</p>
+            <p class="dropzone-sub">Supports PNG, JPG, WEBP, GIF, SVG (or Paste with Ctrl+V)</p>
+            <input type="file" id="localFileInput" accept="image/*" style="display: none;">
+            <button class="win98-btn btn-browse-files" id="btnBrowseFiles">
+              <span>📂 Browse My Computer...</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Retro Effects / Post-Process Bar -->
+        <div class="media-filter-bar">
+          <span class="filter-label">Retro FX:</span>
+          <button class="win98-btn filter-btn active" data-filter="normal">Normal</button>
+          <button class="win98-btn filter-btn" data-filter="pixelate">8-Bit Pixel</button>
+          <button class="win98-btn filter-btn" data-filter="cyber">Y2K Cyber</button>
+          <button class="win98-btn filter-btn" data-filter="vintage">90s Sepia</button>
+          <button class="win98-btn filter-btn" data-filter="grayscale">GameBoy B&W</button>
+        </div>
+
+        <!-- Active Selected/Captured Image Preview & Choices -->
+        <div class="import-preview-section" id="importPreviewSection" style="display: none;">
+          <div class="preview-header">
+            <span style="font-family: var(--font-pixel); font-size: 8px;">TARGET IMAGE PREVIEW:</span>
+            <span id="previewMeta" style="font-size: 9px; color: #555;">Ready</span>
+          </div>
+          <div class="preview-display-row">
+            <div class="preview-thumb-box">
+              <img id="importPreviewImg" src="" alt="Captured or Uploaded Preview">
+            </div>
+            
+            <div class="preview-actions-column">
+              <p style="font-size: 11px; margin-bottom: 6px; font-weight: bold;">How would you like to use this image?</p>
+              <div class="action-options-grid">
+                <button class="win98-btn import-apply-btn" id="btnApplyModel">
+                  <span class="btn-emoji">👗</span>
+                  <div class="btn-text-group">
+                    <strong>Try-On Model / Body</strong>
+                    <small>Try clothes directly on your body</small>
+                  </div>
+                </button>
+
+                <button class="win98-btn import-apply-btn" id="btnApplyFace">
+                  <span class="btn-emoji">👤</span>
+                  <div class="btn-text-group">
+                    <strong>Mannequin Face Selfie</strong>
+                    <small>Pin selfie head onto pixel mannequin</small>
+                  </div>
+                </button>
+
+                <button class="win98-btn import-apply-btn" id="btnApplyWardrobe">
+                  <span class="btn-emoji">👕</span>
+                  <div class="btn-text-group">
+                    <strong>Wardrobe Item / Sticker</strong>
+                    <small>Add to tray & drag/resize on fit</small>
+                  </div>
+                </button>
+
+                <button class="win98-btn import-apply-btn" id="btnApplyBackground">
+                  <span class="btn-emoji">🖼️</span>
+                  <div class="btn-text-group">
+                    <strong>Canvas Background</strong>
+                    <small>Set as fitting room wallpaper</small>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="win98-btn modal-close-btn" id="btnCloseImportModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
