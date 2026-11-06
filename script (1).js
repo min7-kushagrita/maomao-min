@@ -1,7 +1,5 @@
-// ============================================================
-// Mau Mau — AI Virtual Try-In (client-side demo compositor)
-// No backend: "try-on" is a draggable/resizable garment overlay
-// composited onto the user's photo with canvas.
+
+// "try-on" is a draggable/resizable garment overlay
 // ============================================================
 
 const state = {
