@@ -12,7 +12,7 @@ const state = {
   dragStart: { x: 0, y: 0 },
 };
 
-// ---------- Screen switching ----------
+// ---------- switching ----------
 const bootScreen = document.getElementById('boot-screen');
 const studioScreen = document.getElementById('studio-screen');
 
@@ -21,7 +21,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   studioScreen.classList.add('active');
 });
 
-// ---------- How-to modal ----------
+// ---------- ----------
 const howModal = document.getElementById('howModal');
 document.getElementById('howBtn').addEventListener('click', () => howModal.classList.remove('hidden'));
 document.getElementById('closeHow').addEventListener('click', () => howModal.classList.add('hidden'));
